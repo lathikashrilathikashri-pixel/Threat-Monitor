@@ -1,0 +1,38 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Environment and sensitive credential files (CRITICAL: NEVER COMMIT SECRETS)
+.env
+.env.local
+.env.production
+*.key
+*.pem
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Node dependencies and build artifacts
+node_modules/
+dist/
+build/
+.npm/
+
+# Agent local log outputs
+*.log
+agent_telemetry.log
+
+# IDE and OS metadata
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

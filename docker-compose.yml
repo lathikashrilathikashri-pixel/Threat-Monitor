@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # 1. Cloud-Standard PostgreSQL Database Container
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: cyber_soc_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: cyber_threat_db
+      POSTGRES_USER: soc_admin
+      POSTGRES_PASSWORD: SocDatabaseSecret2026!
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U soc_admin -d cyber_threat_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # 2. Flask REST API & Threat Detection Engine Container
+  soc-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cyber_soc_backend
+    restart: unless-stopped
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://soc_admin:SocDatabaseSecret2026!@postgres-db:5432/cyber_threat_db
+      API_SECRET: soc-secret-cyber-defense-key-prod
+      JWT_SECRET: jwt-soc-token-signing-secret-2026
+      CORS_ORIGINS: "*"
+      PORT: 5000
+    ports:
+      - "5000:5000"
+
+volumes:
+  pgdata:
