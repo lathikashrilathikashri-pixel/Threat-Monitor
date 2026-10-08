@@ -1,0 +1,134 @@
+{
+  "info": {
+    "name": "Cyber Threat Monitoring & Incident Response API",
+    "_postman_id": "b93c8a14-41d3-4903-8968-3e4b7899a123",
+    "description": "Postman API test suite for the Level 5 SOC Cybersecurity Platform.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/api/health", "host": ["{{baseUrl}}"], "path": ["api", "health"] }
+      }
+    },
+    {
+      "name": "Auth - Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();",
+              "if (jsonData.token) {",
+              "    pm.environment.set('authToken', jsonData.token);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"username\": \"admin\",\n    \"password\": \"AdminSecure2026!\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api", "auth", "login"] }
+      }
+    },
+    {
+      "name": "Dashboard - Stats",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/api/dashboard/stats", "host": ["{{baseUrl}}"], "path": ["api", "dashboard", "stats"] }
+      }
+    },
+    {
+      "name": "Events - Ingest Telemetry",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-Device-Token", "value": "sec_dev_token_alpha_9921" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"device_id\": \"LAPTOP-SEC-AGENT-01\",\n    \"event_type\": \"FAILED_LOGIN\",\n    \"source_ip\": \"203.0.113.88\",\n    \"username\": \"admin\",\n    \"description\": \"Simulated invalid password attempt from external host\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/api/events", "host": ["{{baseUrl}}"], "path": ["api", "events"] }
+      }
+    },
+    {
+      "name": "Events - List",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/api/events?limit=20", "host": ["{{baseUrl}}"], "path": ["api", "events"] }
+      }
+    },
+    {
+      "name": "Alerts - List",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/api/alerts", "host": ["{{baseUrl}}"], "path": ["api", "alerts"] }
+      }
+    },
+    {
+      "name": "Alerts - Convert to Incident",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/api/alerts/1/convert-incident", "host": ["{{baseUrl}}"], "path": ["api", "alerts", "1", "convert-incident"] }
+      }
+    },
+    {
+      "name": "Incidents - List",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/api/incidents", "host": ["{{baseUrl}}"], "path": ["api", "incidents"] }
+      }
+    },
+    {
+      "name": "Devices - List",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/api/devices", "host": ["{{baseUrl}}"], "path": ["api", "devices"] }
+      }
+    },
+    {
+      "name": "Devices - Heartbeat",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-Device-Token", "value": "sec_dev_token_alpha_9921" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"device_id\": \"LAPTOP-SEC-AGENT-01\",\n    \"api_key\": \"sec_dev_token_alpha_9921\",\n    \"os_type\": \"Windows 11\",\n    \"ip_address\": \"192.168.1.105\"\n}"
+        },
+        "url": { "raw": "{{baseUrl}}/api/devices/heartbeat", "host": ["{{baseUrl}}"], "path": ["api", "devices", "heartbeat"] }
+      }
+    },
+    {
+      "name": "Blocked IPs - List",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{authToken}}" }],
+        "url": { "raw": "{{baseUrl}}/api/blocked-ips", "host": ["{{baseUrl}}"], "path": ["api", "blocked-ips"] }
+      }
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "authToken", "value": "" }
+  ]
+}
